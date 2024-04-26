@@ -127,7 +127,9 @@ def register():
         lastname = form.lastname.data
         location = form.location.data
         biography = form.biography.data
-
+        profile_photo = request.files["profile"]
+        profile_filename = secure_filename(profile_photo.filename)
+        profile_photo.save(os.path.join(app.config["UPLOAD_FOLDER"], profile_filename))
         new_user = Users(
             email=email,
             username=username,
