@@ -2,6 +2,7 @@
   "name": "info3180-vuejs-flask-starter",
   "version": "1.0.0",
   "scripts": {
+    "serve": "vue-cli-service serve",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
