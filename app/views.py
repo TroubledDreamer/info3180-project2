@@ -10,14 +10,7 @@ import os
 from functools import wraps
 
 import jwt
-from flask import (
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    send_file,
-    send_from_directory,
-)
+from flask import g, jsonify, request, send_file, send_from_directory
 from flask_wtf.csrf import generate_csrf
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
@@ -299,7 +292,7 @@ def like(post_id):
 
 @app.route("/api/v1/generate-token/<uid>", methods=["POST"])
 def generate_token(uid):
-    timestamp = datetime.utcnow()
+    timestamp = datetime.datetime.utcnow()
     payload = {
         "uid": uid,
         "iat": timestamp,
