@@ -8,13 +8,12 @@ class Users(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(300))
     firstname = db.Column(db.String(100))
     lastname = db.Column(db.String(100))
     email = db.Column(db.String(100))
     location = db.Column(db.String(100))
     biography = db.Column(db.String(100))
-    profile_photo = db.Column(db.String(100))
     joined_on = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def __init__(
@@ -26,7 +25,6 @@ class Users(db.Model):
         email,
         location,
         biography,
-        profile_photo,
     ):
         self.firstname = firstname
         self.lastname = lastname
@@ -35,7 +33,6 @@ class Users(db.Model):
         self.email = email
         self.location = location
         self.biography = biography
-        self.profile_photo = profile_photo
 
 
 class Follows(db.Model):

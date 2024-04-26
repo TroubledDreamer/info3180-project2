@@ -11,6 +11,7 @@ from functools import wraps
 
 import jwt
 from flask import (
+    g,
     jsonify,
     redirect,
     render_template,
@@ -127,7 +128,6 @@ def register():
         lastname = form.lastname.data
         location = form.location.data
         biography = form.biography.data
-
         new_user = Users(
             email=email,
             username=username,
@@ -136,7 +136,6 @@ def register():
             lastname=lastname,
             location=location,
             biography=biography,
-            profile_photo=profile_photo,
         )
         db.session.add(new_user)
         db.session.commit()
@@ -151,7 +150,6 @@ def register():
                 "lastname": new_user.lastname,
                 "location": new_user.location,
                 "biography": new_user.biography,
-                "profile_photo": new_user.profile_photo,
             }
         )
     else:
@@ -297,7 +295,7 @@ def like(post_id):
 
 @app.route("/api/v1/generate-token/<uid>", methods=["POST"])
 def generate_token(uid):
-    timestamp = datetime.utcnow()
+    timestamp = datetime.datetime.utcnow()
     payload = {
         "uid": uid,
         "iat": timestamp,
