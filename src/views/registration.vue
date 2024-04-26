@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submitForm" class="registration-form">
+  <form @submit.prevent="registration" id="registrationForm" class="registration-form">
     <h2>Registration</h2>
     <label for="username">Username:</label>
     <input type="text" id="username" v-model="username" required>
@@ -29,7 +29,109 @@
   </form>
 </template>
 
-<script>
+
+
+
+
+
+<script setup>
+import { ref , onMounted } from 'vue';
+let csrf_token = ref("");
+let fetchResponseType = ref("")
+let fetchResponse = ref("")
+    
+
+
+
+function getCsrfToken() {
+
+    fetch("/api/v1/csrf-token")
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data);
+        csrf_token.value = data.csrf_token;
+    })
+
+}
+
+
+onMounted(() => {
+    getCsrfToken();
+})
+
+
+function registration() {
+    let registrationForm = document.getElementById('registrationForm');
+    let form_data = new FormData(registrationForm);
+    
+
+
+    fetch("/api/v1/register", {
+        method: "POST",
+        body: form_data,
+        headers: {
+        'X-CSRFToken': csrf_token.value
+        } 
+    })
+
+    .then(function(response) {
+        return response.json();
+    })
+
+    .then(function(data) {
+        console.log(data);
+        fetchResponse.value = data
+                    
+        if(data.hasOwnProperty('errors')) {
+                fetchResponseType.value = "danger"
+            } else {
+                fetchResponseType.value = "success"
+            }
+
+    })
+    .catch(function(error) {
+        console.log(error);
+    });
+}
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <script>
 export default {
   data() {
     return {
@@ -64,7 +166,7 @@ export default {
     }
   }
 };
-</script>
+</script> -->
 
 <style scoped>
 .registration-form {
