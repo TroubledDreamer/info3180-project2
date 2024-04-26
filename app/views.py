@@ -224,7 +224,7 @@ def post(user_id):
 @app.route("/api/users/<user_id>/follow", methods=["POST"])
 @requires_auth
 def follow_user(user_id):
-    target_id = user_id
+    target_id = request.json.get("user_id")
     follower_id = request.json.get(
         "follower_id"
     )  # big assuminption the follower_id is sent in the request body of the vue
@@ -264,20 +264,8 @@ def get_all_post():
 @app.route("/api/v1/posts/<post_id>/like", methods=["POST"])
 @requires_auth
 def like(post_id):
-    post = post_id
-
-    jwt_token = request.headers.get("Authorization")
-    if not jwt_token:
-        return jsonify({"message": "Authorization header is missing"}), 401
-    try:
-        token_data = jwt.decode(
-            jwt_token, app.config["SECRET_KEY"], algorithms=["HS256"]
-        )
-        user_id = token_data["user_id"]
-    except jwt.ExpiredSignatureError:
-        return jsonify({"message": "Token has expired"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"message": "Invalid token"}), 401
+    post = request.json.get("post_id")
+    user_id = request.json.get("user_id")
 
     existing_like = Likes.query.filter_by(post_id=post_id, user_id=user_id).first()
     if existing_like:
@@ -286,7 +274,7 @@ def like(post_id):
     new_like = Likes(post_id=post, user_id=user_id)
     db.session.add(new_like)
     db.session.commit()
-    num_likes = Likes.query.filter_by(post_id=post_id).count()
+    num_likes = Likes.query.filter_by(post_id=post).count()
     return jsonify({"message": "Post liked!", "Likes": num_likes}), 200
 
 
