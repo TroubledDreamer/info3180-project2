@@ -10,9 +10,6 @@ import os
 from functools import wraps
 
 import jwt
-from app import app, db
-from app.forms import LoginForm, PostForm, RegistrationForm
-from app.models import Follows, Likes, Posts, Users
 from flask import (
     jsonify,
     redirect,
@@ -24,6 +21,10 @@ from flask import (
 from flask_wtf.csrf import generate_csrf
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
+
+from app import app, db
+from app.forms import LoginForm, PostForm, RegistrationForm
+from app.models import Follows, Likes, Posts, Users
 
 ###
 # Routing for your application.
@@ -167,9 +168,17 @@ def login():
         user = db.session.execute(
             db.select(Users).filter_by(username=username)
         ).scalar()
-        if check_password_hash(pwhash=user.password, password=password):
-            token = generate_token(user.id)
-            return jsonify({"message": "User Successfully logged In", "token": token})
+        if user:
+            # User exists, now verify the password
+            if check_password_hash(pwhash=user.password, password=password):
+                token = generate_token(user.id)
+                return jsonify(
+                    {"message": "User Successfully logged In", "token": token}
+                )
+            else:
+                return jsonify({"message": "Invalid username or password"}), 401
+        else:
+            return jsonify({"message": "User does not exist"}), 404
     else:
         errors = form_errors(form)
         return jsonify({"errors": errors}), 400
