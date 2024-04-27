@@ -17,7 +17,7 @@ const routes = [
   { path: '/registration', component: Registration },
   { path: '/explore', component: Explore },
   { path: '/profile', component: Profile },
-  { path: '/newpost', component: NewPost }
+  { path: '/newpost', component: NewPost },
   { path: '/Logout', component: Logout }
 ];
 
