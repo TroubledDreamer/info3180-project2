@@ -20,7 +20,13 @@
               <RouterLink to="/" class="nav-link active">Home</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/about">About</RouterLink>
+              <RouterLink class="nav-link" to="/explore">Explore</RouterLink>
+            </li>
+            <li v-if="user_id" class="nav-item">
+              <RouterLink class="nav-link" to="/users/${user_id}">My Profile</RouterLink>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" @click="logout">Logout</button>
             </li>
           </ul>
         </div>
@@ -30,7 +36,53 @@
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import {ref, onMounted} from 'vue';
+
+const token = ref(localStorage.getItem("token") || "");
+const user_id = ref(null);
+const router = useRouter()
+
+async function logout() {
+  try {
+    const response = await fetch('/logout', { method: 'POST' }); // Send POST request
+    if (!response.ok) {
+      throw new Error('Logout failed');
+    }
+    localStorage.removeItem('token');
+    user_id.value = null; 
+    router.push('/login');  
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+}
+
+function getToken(token){
+  fetch(`api/v1/decode-token/${token}`,{
+        method: 'POST'
+      })
+  .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error decoding token: ${response.statusText}`);
+      }
+      return response.json();
+  })
+  .then(data => {
+    user_id = data.token;
+    this.error = null;
+  })
+  .catch(error => {
+    console.error('Error decoding token:', error);
+    this.error = error.message;
+  });
+}
+
+onMounted(()=>{
+  if(token.value){
+    getToken(token);
+  };
+});
+  
 </script>
 
 <style>

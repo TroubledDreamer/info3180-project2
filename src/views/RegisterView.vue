@@ -1,16 +1,16 @@
 <template>
     <div class="container">
-      <img alt="water under a bridge" src="@/assets/bridge.jpg"/>
-      <HomeMenu />
+        <h1>Register</h1>
+        <RegisterForm />
     </div>
 </template>
 
 <script>
-import HomeMenu from '@/components/HomeMenu.vue';
+import RegisterForm from '@/components/RegisterForm.vue';
 
 export default {
   components: {
-    HomeMenu,
+    RegisterForm,
   },
 };
 </script>

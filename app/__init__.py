@@ -7,8 +7,7 @@ from .config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config["WTF_CSRF_ENABLED"] = False  # remove when ready
-# csrf = CSRFProtect(app)
+csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 

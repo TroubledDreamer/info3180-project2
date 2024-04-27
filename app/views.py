@@ -131,7 +131,7 @@ def register():
             lastname=lastname,
             location=location,
             biography=biography,
-            profile_photo=profile_photo,
+            profile_photo=profile_filename,
         )
         db.session.add(new_user)
         db.session.commit()
@@ -147,6 +147,7 @@ def register():
                 "location": new_user.location,
                 "biography": new_user.biography,
                 "profile_photo": new_user.profile_photo,
+                "created_on": new_user.joined_on,
             }
         )
     else:
@@ -168,12 +169,12 @@ def login():
             if check_password_hash(pwhash=user.password, password=password):
                 token = generate_token(user.id)
                 return jsonify(
-                    {"message": "User Successfully logged In", "token": token}
+                    {"message": "User Successfully logged In", "token": token}, 200
                 )
             else:
                 return jsonify({"message": "Invalid username or password"}), 401
         else:
-            return jsonify({"message": "User does not exist"}), 404
+            return jsonify({"message": "User does not exist"}), 405
     else:
         errors = form_errors(form)
         return jsonify({"errors": errors}), 400
@@ -187,7 +188,7 @@ def logout():
 
 @app.route("/api/v1/users/<user_id>/posts", methods=["POST"])
 @requires_auth
-def get_post(user_id):
+def post(user_id):
     form = PostForm()
     if form.validate_on_submit():
         photo = request.files["photo"]
@@ -206,7 +207,7 @@ def get_post(user_id):
 
 @app.route("/api/v1/users/<user_id>/posts", methods=["GET"])
 @requires_auth
-def post(user_id):
+def get_post(user_id):
     posts = Posts.query.filter_by(user_id=user_id).all()
     post_list = []
     for post in posts:
@@ -288,6 +289,12 @@ def generate_token(uid):
     }
     token = jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
     return token
+
+
+@app.route("/api/v1/decode-token/<token>", methods=["POST"])
+def decode_token(token):
+    detoken = jwt.decode(token, app.config["SECRET_KEY"], algorithm="HS256")
+    return jsonify(token=detoken.uid)
 
 
 # Here we define a function to collect form errors from Flask-WTF
