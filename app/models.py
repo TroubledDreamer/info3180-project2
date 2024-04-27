@@ -1,5 +1,6 @@
 # Add any model classes for Flask-SQLAlchemy here
 from werkzeug.security import generate_password_hash
+from datetime import datetime
 
 from app import db
 
@@ -27,6 +28,7 @@ class Users(db.Model):
         location,
         biography,
         profile_photo,
+        joined_on
     ):
         self.firstname = firstname
         self.lastname = lastname
@@ -36,6 +38,7 @@ class Users(db.Model):
         self.location = location
         self.biography = biography
         self.profile_photo = profile_photo
+        self.joined_on = joined_on
 
 
 class Follows(db.Model):
@@ -61,6 +64,7 @@ class Posts(db.Model):
         self.caption = caption
         self.photo = photo
         self.user_id = user_id
+        self.created_on = created_on
 
 
 class Likes(db.Model):
