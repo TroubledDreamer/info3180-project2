@@ -33,75 +33,61 @@
 
 
 
-
 <script setup>
-import { ref , onMounted } from 'vue';
-let csrf_token = ref("");
-let fetchResponseType = ref("")
-let fetchResponse = ref("")
-    
+import { ref, reactive, onMounted } from 'vue';
 
-
+const csrfToken = ref("");
+const form = reactive({
+  username: '',
+  password: '',
+  firstname: '',
+  lastname: '',
+  email: '',
+  location: '',
+  biography: '',
+  profilePhoto: null
+});
 
 function getCsrfToken() {
-
-    fetch("/api/v1/csrf-token")
-    .then((response) => response.json())
-    .then((data) => {
-        console.log(data);
-        csrf_token.value = data.csrf_token;
-    })
-
-}
-
-
-onMounted(() => {
-    getCsrfToken();
-})
-
-
-function registration() {
-    let registrationForm = document.getElementById('registrationForm');
-    let form_data = new FormData(registrationForm);
-    
-
-
-    fetch("/api/v1/register", {
-        method: "POST",
-        body: form_data,
-        headers: {
-        'X-CSRFToken': csrf_token.value
-        } 
-    })
-
-    .then(function(response) {
-        return response.json();
-    })
-
-    .then(function(data) {
-        console.log(data);
-        fetchResponse.value = data
-                    
-        if(data.hasOwnProperty('errors')) {
-                fetchResponseType.value = "danger"
-            } else {
-                fetchResponseType.value = "success"
-            }
-
-    })
-    .catch(function(error) {
-        console.log(error);
+  fetch("/api/v1/csrf-token")
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      csrfToken.value = data.csrf_token;
     });
 }
 
+onMounted(getCsrfToken);
 
+function registration() {
+  const formData = new FormData();
+  for (const key in form) {
+    formData.append(key, form[key]);
+  }
 
+  fetch("/api/v1/register", {
+    method: "POST",
+    body: formData,
+    headers: {
+      'X-CSRFToken': csrfToken.value
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    alert(data.message || 'Registration successful!');
+  })
+  .catch(error => {
+    console.error(error);
+    alert('Error during registration!');
+  });
+}
 
-
-
-
-
+function handlePhotoUpload(event) {
+  form.profilePhoto = event.target.files[0];
+}
 </script>
+
 
 
 

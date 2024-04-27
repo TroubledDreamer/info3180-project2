@@ -20,6 +20,50 @@
   </template>
   
   <script>
+
+
+
+
+  function fetchPost(user_id){
+      fetch("/api/v1/users/${user_id}/posts", {
+        "headers": {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      .then(response => {
+              if(response.ok){return response.json()}
+              else{return Promise.reject('Something was wrong with fetch request!')}
+          })
+          .then(data => {
+              console.log(data);
+              post.value = data["post"]
+              localStorage.setItem('post', JSON.stringify(data.post));
+          })
+          .catch(error => {
+              console.log(error);
+          })
+      }
+  
+      onMounted(() => {
+        fetchPost()
+      });
+
+
+
+
+
+  post= localStorage.getItem('post')
+
+  let username = ref(post.username);
+  let location = ref(post.location);
+  let biography = ref(post.biography);
+  let profilePhoto = ref(post.profilePhoto);
+  let isFollowing = ref(post.isFollowing);
+  let followerCount = ref(post.followerCount);
+  let photos = ref(post.photos);
+
+
+
   export default {
     data() {
       return {
@@ -38,6 +82,37 @@
         this.isFollowing = !this.isFollowing;
         if (this.isFollowing) {
           this.followerCount++;
+
+      fetch("/api/v1/users/${user_id}/follow", {
+        "headers": {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+
+    .then(function(response) {
+        return response.json();
+    })
+
+    .then(function(data) {
+        console.log(data);
+        fetchResponse.value = data
+                    
+        if(data.hasOwnProperty('errors')) {
+                fetchResponseType.value = "danger"
+            } else {
+                fetchResponseType.value = "success"
+                generateToken() 
+            }
+
+    })
+    .catch(function(error) {
+        console.log(error);
+    });
+
+
+
+
+
         } else {
           this.followerCount--;
         }

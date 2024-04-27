@@ -7,24 +7,46 @@
           <h3>{{ post.caption }}</h3>
           <p>Posted by: {{ post.username }}</p>
           <button @click="viewUserProfile(post.user_id)">View Profile</button>
+
         </div>
       </div>
     </div>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        posts: [] // You should populate this array with the posts data from the API
-      };
-    },
-    methods: {
-      viewUserProfile(userId) {
-        // Add logic to navigate to the user profile page of the clicked user
+  <script setup>
+  import { ref, onMounted } from "vue";
+  
+  let posts = ref([]);
+  
+  function fetchPosts(){
+      fetch("/api/v1/posts", {
+        "headers": {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      .then(response => {
+              if(response.ok){return response.json()}
+              else{return Promise.reject('Something was wrong with fetch request!')}
+          })
+          .then(data => {
+              console.log(data);
+              posts.value = data["posts"]
+          })
+          .catch(error => {
+              console.log(error);
+          })
       }
-    }
-  };
+  
+      onMounted(() => {
+        fetchPosts()
+      });
+
+
+
+
+
+
+  
   </script>
   
   <style scoped>
