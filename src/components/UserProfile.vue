@@ -1,17 +1,27 @@
 <template>
 <div class="containerio">
+  <div class="toga">
             <div class="img">
                 <img class="profileimg" :src="`/api/v1/uploads/${user.profile}`" alt="Card image">
             </div>
                 <div class="back">
                     <p class="name">{{user.fullname}}</p>
-                    <p class="username text-secondary">{{user.location}}</p>
-                    <p class="username text-secondary">{{user.joined}}</p>
+                    <p class="username">{{user.location}}</p>
+                    <p class="usert">{{user.joined}}</p>
                     <p class="bio text-secondary">{{user.biography}}</p>
                 </div>
+  </div>
             <div class="lel">
-                    <dd class="col-sm-9 "> {{user.posts}} </dd>
-                    <dd class="col-sm-9 "> {{user.follows}} </dd>
+              <div class="notif">
+                <div class="tri">
+                    <p class="powa "> {{user.posts}} </p>
+                    <p class="pow">Posts</p>
+                </div>
+                <div class="tri">
+                    <p class="powa"> {{user.follows}} </p>
+                    <p class="pow">Followers</p>
+                </div>
+              </div>
                     <button id="folly" @click="followUser" type="submit">Follow</button>
             </div>
 </div>
@@ -96,91 +106,88 @@ onMounted(() => {
 </script>
 
 <style>
-.profile{
-    width: 800px;
-    height: 330px;
-    margin-top:7em;
-    display:flex;
-    flex-direction: row;
-    margin-bottom:4em;
-    background-color:white;
+.containerio{
+  display:flex;
+  width:90%;
+  max-width:1000px;
+  gap: 20px;
+  margin:auto;
+  justify-content:space-between;
+  background-color:white;
+  border: 1px #ccc solid;
+  padding:10px;
+  height: 300px;
 }
 
-.profileimg{
-    margin-left:1em;
-    width:150px;
-    height:150px;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.container{
-    overflow: scroll;
+  .notif{
     display:flex;
-    flex-direction: column;
+    gap:20px;
+    font-weight:600;
+    text-align:center;
+    font-size: 16px;
+  }
+  .powa{
+    margin-bottom:0px;
+  }
+  .lel{
+    display: grid;
     align-items: center;
-    justify-content: center;
-}
+  }
 
-.card-img-top{
-    width:100%;
-    height:200px;
-    object-fit: cover;
-}
-
-
-
-div.lel > p{
-    margin-top:1em;
-    margin-bottom:0em;
-}
-
-
-
-.name{
+  #folly{
+    height:40px;
+    width:150px;
     font-weight:700;
-    font-size:30px;
-    margin-bottom:0em;
-}
+    background-color:#8585FF;
+  }
 
-.username{
-    margin-bottom:0em;
-    color:rgb(170, 168, 168);
+  #folly following{
+    background-color: green;
+  }
+
+  .pow{
+    color:gray;
+    font-size:18px;
+  }
+
+  .name{
     font-weight:600;
+    font-size:20px;
+  }
+
+  .username{
+    margin-bottom:0px;
+    color:gray;
+  }
+
+  .usert{
+    color:gray;
+  }
+
+.toga {
+    display: flex;
+    align-items: center; 
 }
 
-.lel{
-    margin-left:2.5em;
-    width:75%;
+.img {
+    flex: 0 0 auto;
+    margin-right: 20px; 
 }
 
-
-dl{
-    margin-top:1em !important; 
-    font-weight:600;
+.profileimg {
+  height: 250px;
+  width: 200px;
 }
 
-.bio{
-    margin-right:10em;
-    font-size:15px;
-    font-weight:600;
+.back {
+  height: 100%;
+  display: grid;
+  align-items: center;
 }
 
-h1{
-    margin-bottom: 1em;
-    margin-right: 12em;
-}
-.btnsmall{
-    width:85%;
-    padding-top:.3em;
-    padding-bottom: .3em;
-}
+  
 
-.card-body{
-    font-size: 15px;
-    padding: .5rem .5rem;
-    font-weight:500;
-    padding-right:0em;
-}
+
+
 
 </style>

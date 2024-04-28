@@ -98,6 +98,7 @@ function like(post_id){
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap:30px;
 }
 
 .postcontainer {
@@ -113,14 +114,19 @@ function like(post_id){
 
 .profileset {
   display: flex;
+  margin:10px;
 }
 
 .profileset img {
   margin-right: 10px;
+  height:50px;
 }
 
 .profileset p{
   margin-bottom:0px;
+  color:black;
+  font-weight:700;
+  text-decoration:none;
 }
 
 .imageset {

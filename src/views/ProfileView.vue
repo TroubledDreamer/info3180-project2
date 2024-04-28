@@ -1,6 +1,6 @@
 <template>
   <UserProfile />
-  <div v-for="post in posts" :key="post.id" class="card">
+  <div v-for="post in posts" :key="post.id" class="cards">
     <div class="card-content">
       <img :src="`/api/v1/uploads/${post.photo}`" alt="Post">
     </div>
@@ -38,3 +38,20 @@ const fetchPosts = () => {
 
 onMounted(fetchPosts);
 </script>
+
+<style>
+.cards{
+    display: grid;;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    margin-top:20px;
+    padding:10px;
+}
+
+.cards img{
+  width: 100%;
+  height:auto;
+  border-radius:0px;
+}
+
+</style>
