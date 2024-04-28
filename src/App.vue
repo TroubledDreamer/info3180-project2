@@ -8,25 +8,11 @@ import AppFooter from "@/components/AppFooter.vue";
   <div id="app">
     <header>
       <!-- Customize your header/navigation here -->
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/Register">Register</router-link>
-        <router-link to="/Login">Login</router-link>
-        <router-link to="/Explore">Explore</router-link>
-        <router-link to="/Profile">Profile</router-link>
-        <router-link to="/Newpost">Newpost</router-link>
-        <router-link to="/Logout">Logout</router-link>
-      </nav>
+      <AppHeader />
     </header>
-
     <main>
-      <router-view></router-view>
+      <RouterView />
     </main>
-
-    <footer>
-      <!-- Customize your footer here -->
-      <p>&copy; 2024 Your Website. All rights reserved.</p>
-    </footer>
   </div>
 </template>
 
@@ -38,27 +24,9 @@ export default {
 </script>
 
 <style>
-/* Add component styles here */
-header {
-  background-color: #f5f5f5;
-  padding: 10px;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-}
-
-nav a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: #333;
-}
-
-footer {
-  background-color: #f5f5f5;
-  padding: 10px;
-  text-align: center;
-  font-size: 14px;
+body {
+  padding-top: 75px;
+  background-color: #fdf7ed;
 }
 </style>
+

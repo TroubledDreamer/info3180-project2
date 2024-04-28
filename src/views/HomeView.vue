@@ -1,36 +1,33 @@
 <template>
-  <div class="container">
-    <div class="text-center">
-      <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-      <h1 class="message">{{ message }}</h1>
+    <div class="containerized">
+      <img alt="water under a bridge" src="@/assets/bridge.jpg"/>
+      <HomeMenu />
     </div>
-  </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
+<script>
+import HomeMenu from '@/components/HomeMenu.vue';
 
-let message = ref("Hello World! This is a VueJS and Flask Starter Template.");
+export default {
+  components: {
+    HomeMenu,
+  },
+};
 </script>
 
-<style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+<style>
+.containerized{
+  display:flex;
+  justify-content:center;
+  height:400px;
+  width:auto;
+  flex-direction:row;
+  gap:20px;
 }
 
-.text-center {
-  text-align: center;
+img{
+  height:400px;
+  border-radius:5px;
 }
-
-.logo {
-  margin-bottom: 20px;
-}
-
-.message {
-  font-size: 24px;
-  color: #333;
-}
+/* Add any component specific styles here */
 </style>
