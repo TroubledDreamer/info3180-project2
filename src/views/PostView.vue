@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <h1>New Post</h1>
+    <div class="containerama">
+        <h3>New Post</h3>
         <PostForm />
     </div>
 </template>

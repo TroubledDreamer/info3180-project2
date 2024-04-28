@@ -46,19 +46,21 @@ const post = () => {
   const postForm = document.getElementById('postForm');
   const formData = new FormData(postForm);
   const router = useRouter();
+  let user_id = localStorage.getItem("id");
 
-fetch("/api/v1/users/{user_id}/posts", {
+fetch(`/api/v1/users/${user_id}/posts`, {
     method: 'POST',
     body: formData,
     headers: {
-      'X-CSRFToken': csrf_token.value
+      'X-CSRFToken': csrf_token.value,
+      'Authorization' : `Bearer ${localStorage.getItem('token')}`,
     }
   })
 .then(response => {
     if (!response.ok) {
       return response.json().then(data => {
         errorMessage.value = data.errors ? Object.values(data.errors) : ['Failed to post'];
-        throw new Error('Failed to post');
+        throw new Error('Failed to post', data.errors);
       });
     }
     return response.json();
@@ -72,3 +74,19 @@ fetch("/api/v1/users/{user_id}/posts", {
   });
 };
 </script>
+
+<style>
+
+  #postForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px; 
+    width: 400px; 
+    background-color: white; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  }
+</style>

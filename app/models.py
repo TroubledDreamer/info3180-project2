@@ -1,7 +1,6 @@
 # Add any model classes for Flask-SQLAlchemy here
-from werkzeug.security import generate_password_hash
-
 from app import db
+from werkzeug.security import generate_password_hash
 
 
 class Users(db.Model):
@@ -55,7 +54,10 @@ class Posts(db.Model):
     caption = db.Column(db.String(100))
     photo = db.Column(db.String(100))
     user_id = db.Column(db.Integer)
-    created_on = db.Column(db.DateTime, default=db.func.current_timestamp())
+    created_on = db.Column(
+        db.String(20),
+        default=lambda: func.strftime("%B %Y", db.func.current_timestamp()),
+    )
 
     def __init__(self, caption, photo, user_id):
         self.caption = caption

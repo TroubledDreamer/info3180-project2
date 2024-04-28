@@ -1,14 +1,17 @@
 
 <template>
-  <div>
-    <h1>Photogram</h1>
+  <div class="containers">
+    <header>
+      <h2>Photogram</h2>
+      <hr />
+    </header>
     <p>Share photos of your favourite moments with friend, family and the world.</p>
-    <div>
+    <div class="button-container">
       <RouterLink to="/register">
-        <button>Register</button>
+        <button class="register">Register</button>
       </RouterLink>
       <RouterLink to="/login">
-        <button>Login</button>
+        <button class="login">Login</button>
       </RouterLink>
     </div>
   </div>
@@ -34,3 +37,49 @@ onMounted(() => {
 });
 
 </script>
+<style>
+.containers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%; /* Stretch buttons to container width */
+  margin:auto;
+}
+
+h2{
+  text-align:center;
+  margin-bottom:10px;
+  margin-top:5px;
+}
+
+.register {
+  background-color: blue;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px;
+}
+
+.login {
+  background-color: green;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width:150px;
+}
+
+</style>

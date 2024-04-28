@@ -169,7 +169,12 @@ def login():
             if check_password_hash(pwhash=user.password, password=password):
                 token = generate_token(user.id)
                 return jsonify(
-                    {"message": "User Successfully logged In", "token": token}, 200
+                    {
+                        "message": "User Successfully logged In",
+                        "token": token,
+                        "id": user.id,
+                    },
+                    200,
                 )
             else:
                 return jsonify({"message": "Invalid username or password"}), 401
@@ -195,7 +200,7 @@ def post(user_id):
         photo_filename = secure_filename(photo.filename)
         photo.save(os.path.join(app.config["UPLOAD_FOLDER"], photo_filename))
         description = form.description.data
-        new_post = Posts(caption=description, photo=photo, user_id=user_id)
+        new_post = Posts(caption=description, photo=photo_filename, user_id=user_id)
         db.session.add(new_post)
         db.session.commit()
         return jsonify({"message": "Successfully created a new post"}), 200
@@ -203,6 +208,33 @@ def post(user_id):
     else:
         errors = form_errors(form)
         return jsonify({"errors": errors}), 400
+
+
+@app.route("/api/user/<user_id>", methods=["GET"])
+def get_info(user_id):
+    user = db.session.execute(db.select(Users).filter_by(id=user_id)).scalar()
+    posts_by_user = db.session.execute(
+        db.select(Posts).filter_by(user_id=user_id)
+    ).fetchall()
+    user_post_count = len(posts_by_user)
+    user_followers = db.session.execute(
+        db.select(Follows).filter_by(user_id=user_id)
+    ).fetchall()
+    user_followers_count = len(user_followers)
+    if user:
+        return jsonify(
+            {
+                "fullname": user.firstname + " " + user.lastname,
+                "location": user.location,
+                "joined": user.joined_on,
+                "biography": user.biography,
+                "profile": user.profile_photo,
+                "posts": user_post_count,
+                "follows": user_followers_count,
+            }
+        )
+    else:
+        return jsonify({"error": "error occured"})
 
 
 @app.route("/api/v1/users/<user_id>/posts", methods=["GET"])
@@ -215,7 +247,7 @@ def get_post(user_id):
             "id": post.id,
             "user_id": user_id,
             "photo": post.photo,
-            "description": post.description,
+            "description": post.caption,
             "created_on": post.created_on,
         }
         post_list.append(post_data)
@@ -225,22 +257,20 @@ def get_post(user_id):
 @app.route("/api/users/<user_id>/follow", methods=["POST"])
 @requires_auth
 def follow_user(user_id):
-    target_id = request.json.get("user_id")
-    follower_id = request.json.get(
-        "follower_id"
-    )  # big assuminption the follower_id is sent in the request body of the vue
+    target_id = user_id
+    follower_id = request.json["id"]
 
     # check if the follow relationship already exists
     existing_follow = Follows.query.filter_by(
         user_id=target_id, follower_id=follower_id
     ).first()
     if existing_follow:
-        return jsonify({"message": "You are already following this user"}), 400
-
+        return jsonify({"message": "You are already following this user"}), 330
+    if target_id == follower_id:
+        return jsonify({"message": "cannot follow self"}), 252
     new_follow = Follows(user_id=target_id, follower_id=follower_id)
     db.session.add(new_follow)
     db.session.commit()
-
     return jsonify({"message": "you are now following that user."}), 200
 
 
@@ -250,13 +280,16 @@ def get_all_post():
     posts = Posts.query.all()
     post_list = []
     for post in posts:
+        usecase = Users.query.filter_by(id=post.user_id).first()
         post_data = {
             "id": post.id,
             "user_id": post.user_id,
             "photo": post.photo,
-            "description": post.description,
+            "description": post.caption,
             "created_on": post.created_on,
-            "likes": Posts.query.filter_by(id=post.id).count(),
+            "likes": Likes.query.filter_by(id=post.id).count(),
+            "username": usecase.username,
+            "profile": usecase.profile_photo,
         }
         post_list.append(post_data)
     return jsonify({"posts": post_list})
@@ -265,18 +298,22 @@ def get_all_post():
 @app.route("/api/v1/posts/<post_id>/like", methods=["POST"])
 @requires_auth
 def like(post_id):
-    post = request.json.get("post_id")
-    user_id = request.json.get("user_id")
-
+    user_id = request.json["user_id"]
     existing_like = Likes.query.filter_by(post_id=post_id, user_id=user_id).first()
     if existing_like:
-        return jsonify({"message": "You have already liked this post"}), 400
-
-    new_like = Likes(post_id=post, user_id=user_id)
+        return jsonify({"message": "You have already liked this post"}, 400)
+    new_like = Likes(post_id=post_id, user_id=user_id)
     db.session.add(new_like)
     db.session.commit()
-    num_likes = Likes.query.filter_by(post_id=post).count()
+    num_likes = Likes.query.filter_by(post_id=post_id).count()
     return jsonify({"message": "Post liked!", "Likes": num_likes}), 200
+
+
+@app.route("/api/v1/uploads/<filename>")
+def get_images(filename):
+    return send_from_directory(
+        os.path.join(os.getcwd(), app.config["UPLOAD_FOLDER"]), filename
+    )
 
 
 @app.route("/api/v1/generate-token/<uid>", methods=["POST"])
@@ -291,9 +328,10 @@ def generate_token(uid):
     return token
 
 
-@app.route("/api/v1/decode-token/<token>", methods=["POST"])
-def decode_token(token):
-    detoken = jwt.decode(token, app.config["SECRET_KEY"], algorithm="HS256")
+@app.route("/api/v1/decode-token", methods=["POST"])
+def decode_token():
+    token = request.json
+    detoken = jwt.decode(token.value, app.config["SECRET_KEY"], algorithm="HS256")
     return jsonify(token=detoken.uid)
 
 

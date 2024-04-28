@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <h1>Login</h1>
+    <div class="containerama">
+        <h3>Login</h3>
         <LoginForm />
     </div>
 </template>
@@ -17,4 +17,8 @@ export default {
 
 <style>
 /* Add any component specific styles here */
+.containerama{
+  display:grid;
+  justify-content:center;
+}
 </style>

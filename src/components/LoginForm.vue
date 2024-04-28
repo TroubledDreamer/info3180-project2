@@ -1,10 +1,10 @@
 <template>
   <form id="loginForm" @submit.prevent="login">
-    <div class="form-group mb-3">
+    <div>
       <label for="username" class="form-label">Username</label>
       <input type="text" name="username" plaeholder="Username" class="form-control"/>
     </div>
-    <div class="form-group mb-3">
+    <div>
       <label for="password" class="form-label">Password</label>
       <input type="text" name="password" plaeholder="Password" class="form-control"/>
     </div>
@@ -23,6 +23,7 @@ const errorMessage = ref('');
 let csrf_token = ref("");
 let token = ref("")
 let router = useRouter();
+let userid;
 
 function getCsrfToken() {
    fetch('/api/v1/csrf-token')
@@ -60,8 +61,12 @@ fetch("/api/v1/auth/login", {
 .then(data => {
     // Display a success message
     successMessage.value = 'User Logged In';
-    token.value = data.token;
-    localStorage.setItem('token',data.token);
+    token.value = data[0].token;
+    userid = data[0].id;
+    console.log(data);
+    localStorage.setItem('token',token.value);
+    localStorage.setItem('id',userid);
+    console.log(userid)
     router.push("/explore")
   })
 .catch(error => {
@@ -69,3 +74,43 @@ fetch("/api/v1/auth/login", {
   });
 };
 </script>
+
+<style>
+  #loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px; 
+    width: 300px; 
+    background-color: white; 
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  }
+
+  .form-label {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  .form-control {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  button[type="submit"] {
+    width: 80%;
+    padding: 10px;
+    background-color: green; 
+    color: #fff; 
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>

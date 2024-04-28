@@ -93,3 +93,18 @@ fetch("/api/v1/register", {
   });
 };
 </script>
+
+<style>
+  #registerForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 1000px; 
+    width: 500px; 
+    background-color: white; 
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  }
+</style>
